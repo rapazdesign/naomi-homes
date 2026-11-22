@@ -1,0 +1,575 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Naomi Homes Pro® — v1.24 (Külön Munkadíj és Anyag + Anyag Kiszállítás + 21% ÁFA)</title>
+  <style>
+    :root {
+      --bg: #f4f4f2;
+      --card: #ffffff;
+      --ink: #17181c;
+      --muted: #5f6368;
+      --accent: #d4af37;
+      --dark: #18191d;
+      --border: #e2e3e6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    .app-shell { max-width: 720px; margin: 0 auto; padding: 12px; }
+    .topbar {
+      background: var(--dark);
+      color: #fff;
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: 0 6px 18px rgba(24, 25, 29, 0.14);
+    }
+    .ver-badge {
+      background: rgba(212, 175, 55, 0.18);
+      color: var(--accent);
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+    .tab-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 8px;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .tab-btn.active {
+      background: var(--dark);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .section-banner {
+      border-radius: 14px;
+      padding: 11px 14px;
+      margin-bottom: 10px;
+      font-weight: 800;
+      font-size: 13.5px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .labor-banner {
+      background: #18191d;
+      color: #fff;
+      border-left: 5px solid var(--accent);
+    }
+    .materials-banner {
+      background: #232730;
+      color: #fff;
+      border-left: 5px solid var(--accent);
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(23, 24, 28, 0.04);
+    }
+    .company-card {
+      background: var(--dark);
+      color: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(212, 175, 55, 0.28);
+    }
+    .company-card .gold { color: var(--accent); font-weight: 800; letter-spacing: 0.04em; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    @media (max-width: 540px) { .grid-2 { grid-template-columns: 1fr; } }
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+    input[type="text"], input[type="date"], select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #cbd0d8;
+      border-radius: 8px;
+      font-size: 13px;
+      background: #fff;
+      color: var(--ink);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    th, td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); background: #fafafb; }
+    .num { text-align: right; white-space: nowrap; }
+    .totals-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(23, 24, 28, 0.04);
+    }
+    .sub-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 4px;
+      font-size: 13px;
+      color: var(--ink);
+      border-bottom: 1px dashed var(--border);
+    }
+    .vat-highlight-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #6b4e00;
+      background: #fff9e3;
+      border: 1px solid #f0dfa4;
+      border-radius: 8px;
+      margin-top: 6px;
+    }
+    .net-total-banner {
+      background: #24262d;
+      color: #fff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .gross-total-banner {
+      background: var(--dark);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      padding: 12px;
+      font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15.5px;
+      margin-top: 8px;
+    }
+    .aszf-box {
+      border-left: 4px solid var(--accent);
+      background: #fffdf5;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 13px;
+      border-top: 1px solid #f2e8c4;
+      border-right: 1px solid #f2e8c4;
+      border-bottom: 1px solid #f2e8c4;
+    }
+    .aszf-box a { color: #b58900; word-break: break-all; font-weight: 600; }
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .item-row:last-child { border-bottom: none; }
+    .calc-input {
+      width: 112px !important;
+      padding: 6px 8px !important;
+      font-size: 13.5px !important;
+      text-align: right;
+    }
+    .vat-select {
+      width: 72px !important;
+      padding: 6px 4px !important;
+      font-size: 12px !important;
+    }
+    .btn-mini {
+      background: #f0f1f4;
+      border: 1px solid #d5d8de;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .btn-mini:hover { background: #e5e8ee; }
+    .btn-dark {
+      background: var(--dark);
+      color: #fff;
+      border: 1px solid var(--accent);
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .auto-pill {
+      display: inline-block;
+      margin-left: 6px;
+      background: #fff6d6;
+      color: #7a5c00;
+      border: 1px solid #e6cb73;
+      border-radius: 999px;
+      padding: 1px 7px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .ref-code { font-size: 11px; color: var(--muted); }
+    .status-toast {
+      background: #fff9e3;
+      border: 1px solid #e6cb73;
+      color: #6b4e00;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    footer { text-align: center; color: var(--muted); font-size: 12px; padding: 12px 0 24px; }
+    @media print {
+      .topbar, .tabs, .no-print { display: none !important; }
+      body { background: #fff; }
+      .app-shell { max-width: 100%; padding: 0; }
+      .card, .totals-box, .company-card, .aszf-box { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="app-shell"></div>
+
+  <script>
+    // Storage key and fixed 21% VAT rate for Naomi Homes Pro v1.24
+    const STORAGE_KEY = "naomi_homes_pro_v124_separate_labor_materials_delivery_state";
+    const VAT_RATE = 21;
+    const VAT_OPTIONS = [21];
+
+    // Catalog of labor and service items with HU labels and optional ES/EN translations
+    const CATALOG_ITEMS = [
+      { id: "dem-tile", name: "Járólap bontás", unit: "m²", netPrice: 6, vatRate: VAT_RATE },
+      { id: "conc", name: "Betonozás", unit: "m²", netPrice: 15, vatRate: VAT_RATE },
+      { id: "debris-1", name: "Törmelék kihordás (1. emelet)", unit: "m²", netPrice: 4, vatRate: VAT_RATE },
+      { id: "carry-1", name: "Anyaghordás (1. emelet)", unit: "m²", netPrice: 2, vatRate: VAT_RATE },
+      { id: "mat-delivery", name: "Anyag kiszállítás", unit: "db", netPrice: 120, vatRate: VAT_RATE, es: "Entrega de materiales", en: "Material delivery" },
+      { id: "container", name: "Konténer díj", unit: "db", netPrice: 150, vatRate: VAT_RATE },
+      { id: "insul", name: "Szigetelés", unit: "m²", netPrice: 8, vatRate: VAT_RATE },
+      { id: "under20", name: "Padló burkolás — 20 m² alatti felár", unit: "db", netPrice: 150, vatRate: VAT_RATE },
+      { id: "floor-norm", name: "Padló burkolás", badge: "Normál méret: 30*30 - 60*120", unit: "m²", netPrice: 30, vatRate: VAT_RATE },
+      { id: "skirting", name: "Lábazat rakás", unit: "fm", netPrice: 5, vatRate: VAT_RATE },
+      { id: "silicone", name: "Szilikon fuga készítés", unit: "fm", netPrice: 1, vatRate: VAT_RATE },
+      { id: "clean", name: "Takarítás", unit: "db", netPrice: 150, vatRate: VAT_RATE },
+      { id: "dem-old", name: "Régi burkolat bontása", unit: "m²", netPrice: 12, vatRate: VAT_RATE, es: "Demolición de revestimiento existente", en: "Existing tile demolition" },
+      { id: "lvl", name: "Aljzatkiegyenlítés", unit: "m²", netPrice: 10, vatRate: VAT_RATE, es: "Nivelación de suelo / pasta niveladora", en: "Floor self-leveling" },
+      { id: "wp", name: "Kenhető vízszigetelés (2 rétegben)", unit: "m²", netPrice: 14, vatRate: VAT_RATE, es: "Impermeabilización líquida (2 capas)", en: "Liquid waterproofing membrane (2 coats)" }
+    ];
+
+    // Default material list & delivery item for Helyiség #2: Terasz (442.99 EUR net total)
+    const DEFAULT_MATERIALS = [
+      { id: "mat-1", ref: "90321404", name: "Suelo porcelánico Vesta efecto piedra natural 60x60...", qty: 8, unit: "db", linePrice: 112.24, vatRate: VAT_RATE },
+      { id: "mat-2", ref: "90202010", name: "Silicona neutra cocinas y baños AXTON 280 ml...", qty: 2, unit: "db", linePrice: 10.98, vatRate: VAT_RATE },
+      { id: "mat-3", ref: "87005472", name: "Mortero para juntas AXTON Multiplus blanco perla 5kg", qty: 1, unit: "db", linePrice: 10.49, vatRate: VAT_RATE },
+      { id: "mat-4", ref: "90112007", name: "Mortero cola Flex H40 gel blanco KERAKOLL de 20kg", qty: 6, unit: "db", linePrice: 86.94, vatRate: VAT_RATE },
+      { id: "mat-5", ref: "84754150", name: "Hormigón seco HS-25 TABICEM gris 25kg", qty: 15, unit: "db", linePrice: 34.35, vatRate: VAT_RATE },
+      { id: "mat-6", ref: "79259655", name: "Lámina impermeable Revestech Dry 50 en rollo 1,...", qty: 1, unit: "db", linePrice: 67.99, vatRate: VAT_RATE },
+      { id: "mat-7", ref: "KISZALLITAS", name: "Anyag kiszállítás (Entrega de materiales)", qty: 1, unit: "db", linePrice: 120.00, vatRate: VAT_RATE }
+    ];
+
+    // Creates the initial application state
+    function makeDefaultState() {
+      return {
+        version: "v1.24",
+        activeTab: "worksheet",
+        defaultVatRate: VAT_RATE,
+        notice: "",
+        company: {
+          name: "Noémi Solymos",
+          subtitle: "Curated Kitchens & Baths",
+          address: "C. Cabo de Creus, 3, 30740 San Pedro del Pinatar, Murcia",
+          taxId: "ES-B00000000",
+          phone: "+34604485445",
+          email: "rapazdesign@gmail.com",
+          executorSignLabel: "Felmérést végezte / Kivitelező (Noémi Solymos )",
+          clientSignLabel: "Megrendelő aláírása",
+          termsUrl: "https://drive.google.com/drive/folders/12oDouW-gfP5sEQxGzKTMGi6ICyrQBLRz"
+        },
+        project: {
+          docTitle: "ÜGYFÉLNEK SZÓLÓ ÁRAJÁNLAT & MUNKALAP",
+          date: "2026-11-22",
+          title: "Terasz felújítás",
+          client: "—",
+          siteAddress: "—",
+          contact: "—",
+          generalNote: "A munkadíj és az anyagköltség (beleértve az anyag kiszállítást is) külön blokkban és külön végösszeggel is szerepel, minden tételnél 21% ÁFA mellett.",
+          paymentTerms: "A feltüntetett egységárak nettó EUR árak, minden tételnél külön feltüntetett 21% ÁFA-val és bruttó összeggel. Fizetési ütemezés: 40% kezdéskor, 40% részszámla, 20% műszaki átadáskor."
+        },
+        rooms: [
+          {
+            id: "room-2",
+            title: "Helyiség #2: Terasz",
+            qtyMap: {
+              "dem-tile": "7",
+              "conc": "7",
+              "debris-1": "7",
+              "carry-1": "7",
+              "container": "1",
+              "insul": "8.74",
+              "under20": "1",
+              "floor-norm": "7",
+              "skirting": "11",
+              "silicone": "11",
+              "clean": "1"
+            },
+            vatMap: {},
+            manualSkirting: true
+          }
+        ],
+        materials: DEFAULT_MATERIALS.map(item => ({ ...item }))
+      };
+    }
+
+    // Checks whether a room title represents a bathroom (where skirting is excluded by default)
+    function isBathroomRoom(title) {
+      const t = String(title || "").toLowerCase();
+      return (
+        t.includes("fürdőszoba") ||
+        t.includes("furdoszoba") ||
+        t.includes("baño") ||
+        t.includes("bano") ||
+        t.includes("aseo") ||
+        t.includes("bathroom")
+      );
+    }
+
+    // Safely evaluates numeric expressions such as "3 * 4" or "8,74"
+    function evalExpr(expr) {
+      if (expr === null || expr === undefined) return 0;
+      const clean = String(expr)
+        .trim()
+        .replace(/,/g, ".")
+        .replace(/[x×*]/gi, "*");
+      if (!clean) return 0;
+      if (!/^[0-9+\-*/().\s]+$/.test(clean)) return 0;
+      try {
+        const val = Function(`"use strict"; return (${clean});`)();
+        return typeof val === "number" && Number.isFinite(val) ? Number(val.toFixed(4)) : 0;
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    // Finds reference floor/surface area for auto skirting calculation
+    function getRoomAreaReference(room) {
+      const qtyMap = room.qtyMap || {};
+      const preferredIds = ["floor-norm", "dem-tile", "dem-old", "conc", "lvl", "wp", "insul"];
+      for (const id of preferredIds) {
+        const v = evalExpr(qtyMap[id]);
+        if (v > 0) return v;
+      }
+      for (const cat of CATALOG_ITEMS) {
+        if (cat.id === "skirting") continue;
+        const v = evalExpr(qtyMap[cat.id]);
+        if (v > 0) return v;
+      }
+      return 0;
+    }
+
+    // Computes automatic skirting length: 4 * sqrt(area)
+    function computeAutoSkirting(room) {
+      if (isBathroomRoom(room.title)) return 0;
+      const area = getRoomAreaReference(room);
+      if (area <= 0) return 0;
+      return Number((4 * Math.sqrt(area)).toFixed(2));
+    }
+
+    // Synchronizes skirting quantity unless manually overridden or excluded for bathrooms
+    function syncRoomSkirting(room) {
+      if (!room.qtyMap) room.qtyMap = {};
+      if (isBathroomRoom(room.title)) {
+        if (!room.manualSkirting) {
+          delete room.qtyMap["skirting"];
+        }
+        return { qty: 0, isAuto: false, excludedBathroom: true };
+      }
+
+      const autoVal = computeAutoSkirting(room);
+      if (!room.manualSkirting) {
+        if (autoVal > 0) {
+          room.qtyMap["skirting"] = String(autoVal);
+        } else {
+          delete room.qtyMap["skirting"];
+        }
+        return { qty: autoVal, isAuto: autoVal > 0, excludedBathroom: false };
+      }
+
+      const manualQty = evalExpr(room.qtyMap["skirting"]);
+      return { qty: manualQty, isAuto: false, excludedBathroom: false };
+    }
+
+    // Formats numbers with Hungarian comma decimal separator
+    function fmtQty(n) {
+      const rounded = Number(Number(n || 0).toFixed(2));
+      return String(rounded).replace(".", ",");
+    }
+
+    // Formats currency in EUR with Hungarian comma decimal separator and space thousands
+    function fmtEur(n) {
+      const num = Number(n || 0);
+      const [intPart, decPart] = num.toFixed(2).split(".");
+      const groupedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+      return `${groupedInt},${decPart} €`;
+    }
+
+    // Ensures all items carry the fixed 21% VAT rate
+    function enforceAll21Vat(parsed) {
+      const def = makeDefaultState();
+      const merged = {
+        ...def,
+        ...(parsed || {}),
+        defaultVatRate: VAT_RATE,
+        notice: typeof parsed?.notice === "string" ? parsed.notice : "",
+        company: { ...def.company, ...(parsed?.company || {}) },
+        project: { ...def.project, ...(parsed?.project || {}) },
+        rooms: Array.isArray(parsed?.rooms) && parsed.rooms.length ? parsed.rooms : def.rooms,
+        materials: Array.isArray(parsed?.materials) && parsed.materials.length ? parsed.materials : def.materials
+      };
+      merged.rooms = merged.rooms.map(r => {
+        const nextVatMap = {};
+        CATALOG_ITEMS.forEach(c => {
+          nextVatMap[c.id] = VAT_RATE;
+        });
+        return {
+          ...r,
+          qtyMap: { ...(r.qtyMap || {}) },
+          vatMap: nextVatMap
+        };
+      });
+      merged.materials = merged.materials.map(m => ({
+        ...m,
+        vatRate: VAT_RATE
+      }));
+      return merged;
+    }
+
+    // Loads state from localStorage with safe fallback
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return enforceAll21Vat(makeDefaultState());
+        return enforceAll21Vat(JSON.parse(raw));
+      } catch (e) {
+        return enforceAll21Vat(makeDefaultState());
+      }
+    }
+
+    // Persists state to localStorage
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        // Ignore storage quota errors in restricted environments
+      }
+    }
+
+    let state = loadState();
+
+    function resetToDefault() {
+      state = enforceAll21Vat(makeDefaultState());
+      state.notice = "Alaphelyzet visszaállítva (Terasz felújítás • v1.24 • 21% ÁFA).";
+      saveState();
+      render();
+    }
+
+    function dismissNotice() {
+      state.notice = "";
+      saveState();
+      render();
+    }
+
+    function updateProjectField(key, val) {
+      state.project[key] = val;
+      saveState();
+    }
+
+    function addRoom() {
+      const nameInput = document.getElementById("newRoomName");
+      const rawTitle = (nameInput ? nameInput.value : "").trim();
+      const idx = state.rooms.length + 1;
+      const cleanName = rawTitle || `Új helyiség #${idx}`;
+      const title = /^helyiség\s*#/i.test(cleanName) ? cleanName : `Helyiség #${idx}: ${cleanName}`;
+      const nextVatMap = {};
+      CATALOG_ITEMS.forEach(c => {
+        nextVatMap[c.id] = VAT_RATE;
+      });
+      state.rooms.push({
+        id: "room-" + Date.now() + "-" + idx,
+        title,
+        qtyMap: {},
+        vatMap: nextVatMap,
+        manualSkirting: false
+      });
+      state.notice = `Új helyiség hozzáadva: ${title}`;
+      saveState();
+      render();
+    }
+
+    function renameRoom(roomIdx, newTitle) {
+      const room = state.rooms[roomIdx];
+      if (!room) return;
+      room.title = String(newTitle || "").trim() || room.title;
+      syncRoomSkirting(room);
+      saveState();
+      render();
+    }
+
+    function setQty(roomIdx, itemId, rawVal) {
+      const room = state.rooms[roomIdx];
+      if (!room) return;
+      if (!room.qtyMap) room.qtyMap = {};
+      room.qtyMap[itemId] = rawVal;
+      if (itemId === "skirting") {
+        room.manualSkirting = String(rawVal || "").trim() !== "";
+      }
+      syncRoomSkirting(room);
+      saveState();
+      render();
+    }
+
+    function resetSkirtingAuto(roomIdx) {
+      const room = state.rooms[roomIdx];
+      if (!room) return;
+      room.manualSkirting = false;
+      syncRoomSkirting(room);
+      saveState();
+      render();
+    }
+
+    function appendMult(roomIdx, itemId) {
+      const room = state.rooms[roomIdx];
+      if (!room) return;
+      if (!room.qtyMap) room.qtyMap = {};
+      const cur = String(room.qtyMap[itemId] || "").trim();
